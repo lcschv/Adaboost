@@ -19,14 +19,14 @@ class AdaBoost(BaseEstimator,ClassifierMixin):
 
         for i in range(self.n_estimators):          
             stumps = DecisionStumps()            
-            self.RULES.append(stumps.set_rule(X,y,self.weights))
-            best_cut = stumps.bestCut(X)
+            self.RULES.append(stumps.getRule(X,y,self.weights))
+            prediction = stumps.bestCut(X)
 
-            errors = best_cut != y
+            errors = prediction != y
             error = errors.dot(self.weights) 
 
             self.ALPHA.append(0.5 * (np.log((1 - error)/error)))
-            w = self.weights * np.exp(-self.ALPHA[i] * best_cut * y)
+            w = self.weights * np.exp(-self.ALPHA[i] * prediction * y)
             self.weights = (w/w.sum()).as_matrix()
 
     def predict(self, x):

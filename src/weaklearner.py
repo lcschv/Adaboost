@@ -7,7 +7,7 @@ class DecisionStumps():
         self.inverted = None
         self.constant = False
 
-    def set_rule(self,X_input,y,weight):
+    def getRule(self,X_input,y,weight):
 
         X = X_input.copy()
         best_error = float("inf")

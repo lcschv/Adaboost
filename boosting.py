@@ -39,11 +39,10 @@ def main():
 	data = Dataset(filein, fileout)
 	X, y = data.readTrainset()
 	for n_estimators in range(1, iterations):
-		# print n_estimators
-		# print("CV accuracy scores for n_estimators="+str(n_estimators)+" :")
+		
 		clf = AdaBoost(n_estimators=n_estimators)
 		scores = cross_val_score(clf, X, y, cv=Kfolds, scoring='accuracy')
-		print(str(n_estimators)+ ","+str(np.array(scores).mean()))
+		print(str(n_estimators)+ "	"+str(np.array(scores).mean())+"	"+str(1-np.array(scores).mean()))
 
 if __name__ == "__main__":
 	main()
