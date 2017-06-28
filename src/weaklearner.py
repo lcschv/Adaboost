@@ -3,59 +3,39 @@ import numpy as np
 class DecisionStumps():
 
     def __init__(self):     
-        self.column_pred = None
-        self.inverted = None
-        self.constant = False
+        self.best_cut = None
 
     def getRule(self,X_input,y,weight):
-
         X = X_input.copy()
-        best_error = float("inf")
-
-        #stumps that predict the column values
+        min_error = 9999.999
+        #Calculates every single cut possible
         for c in range(len(X[0])):
-            X[X[:,c] == 0,c] = -1
-            errors = (X[:,c] != y)
-            error = errors.dot(weight)
-            if(error < best_error):
-                best_error = error
-                best_h_column = c
-                self.inverted = False
+            errors = (X[:,c] != y)      
+            error = np.dot(errors,weight)
+            if(error < min_error):
+                min_error = error
+                self.best_cut = c
 
-        #stumps that predict the inverse of the column values
-        for c in range(len(X[0])):                     
-            X[X[:,c] == 1,c] = -1
-            X[X[:,c] == 0,c] =  1
-            errors = (X[:,c] != y)
-            error =errors.dot(weight)            
-            if(error < best_error):
-                best_error = error
-                best_h_column = c
-                self.inverted = True
-
-        #constant 1 prediction
-        error = (np.ones(X.shape[0]) != y).dot(weight)
-        if(error < best_error):
-            self.constant = 1
-        #constant -1 prediction
-
-        error = (np.ones(X.shape[0])*-1 != y).dot(weight)
-        if(error < best_error):
-            self.constant = -1
-
-        self.column_pred = best_h_column
+        #Check if setting just true or false to everything is the best cut
+        errors = (np.ones(len(X)) != y)
+        error = np.dot(errors, weight)
+        self.onecut = False
+        if(error < min_error and 1-error > 0.5):
+            self.onecut = 1
+        elif 1-error < min_error:
+            self.onecut = -1
         return self
+
 
     def bestCut(self,X_input):        
         X = X_input.copy()
-        if(self.constant == 1):
+        #Check if it was only one cut
+        if(self.onecut == 1):
             return np.ones(len(X))
-        elif(self.constant == -1):
+        elif(self.onecut == -1):
             return np.ones(len(X)) *-1
-
-        if(self.inverted):
-            X[X[:,self.column_pred] == 1,self.column_pred] = -1
-            X[X[:,self.column_pred] == 0,self.column_pred] =  1
-        else:
-            X[X[:,self.column_pred] == 0,self.column_pred] = -1
-        return X[:,self.column_pred]
+        
+        #return the best cut if it's not only one cut
+        X[X[:,self.best_cut] == 0,self.best_cut] = -1
+        
+        return X[:,self.best_cut]

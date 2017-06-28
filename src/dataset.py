@@ -15,4 +15,8 @@ class Dataset(object):
         self.input = tictactoe[[col for col in tictactoe.columns if col !="classes"]]
         self.input = pd.get_dummies(self.input).as_matrix().astype(int)
         self.labels = tictactoe["classes"]
+        for x in range(len(self.input)):
+            for y in range(len(self.input[x])):
+                if self.input[x,y] == 0:
+                    self.input[x,y] = -1
         return self.input, self.labels

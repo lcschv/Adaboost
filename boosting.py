@@ -22,7 +22,7 @@ def get_args():
 	parser.add_argument(
 		"-k", "--Kfolds", type=int, help="Number of iterations.", required=True)
 	
-	#Array containing all the prguments passed to the program
+	#Array containing all the arguments passed to the program
 	args = parser.parse_args()
 	
 	#Assign args to variables
@@ -38,11 +38,12 @@ def main():
 	filein, fileout, iterations, Kfolds = get_args()
 	data = Dataset(filein, fileout)
 	X, y = data.readTrainset()
-	for n_estimators in range(1, iterations):
-		
-		clf = AdaBoost(n_estimators=n_estimators)
-		scores = cross_val_score(clf, X, y, cv=Kfolds, scoring='accuracy')
-		print(str(n_estimators)+ "	"+str(np.array(scores).mean())+"	"+str(1-np.array(scores).mean()))
+	## Each iteration is the number of weaklearners used.
+	print "Ite. ----- Accuracy ----- Error--"
+	for n_iterations in range(1, iterations):		
+		clf = AdaBoost(n_iterations)
+		scores = cross_val_score(clf, X, y, cv=Kfolds)
+		print(str(n_iterations)+ "	"+str(np.array(scores).mean())+"	"+str(1-np.array(scores).mean()))
 
 if __name__ == "__main__":
 	main()
